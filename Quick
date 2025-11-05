@@ -1,0 +1,81 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+// Function to swap two elements
+void swap(int &a, int &b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+// Deterministic partition function (last element as pivot)
+int partitionDeterministic(int arr[], int low, int high) {
+    int pivot = arr[high];  
+    int i = (low - 1);
+
+    for (int j = low; j < high; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+// Randomized partition function
+int partitionRandomized(int arr[], int low, int high) {
+    // Generate random pivot index
+    int randomIndex = low + rand() % (high - low + 1);
+    swap(arr[randomIndex], arr[high]);
+    return partitionDeterministic(arr, low, high);
+}
+
+// Deterministic Quick Sort
+void quickSortDeterministic(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partitionDeterministic(arr, low, high);
+        quickSortDeterministic(arr, low, pi - 1);
+        quickSortDeterministic(arr, pi + 1, high);
+    }
+}
+
+// Randomized Quick Sort
+void quickSortRandomized(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partitionRandomized(arr, low, high);
+        quickSortRandomized(arr, low, pi - 1);
+        quickSortRandomized(arr, pi + 1, high);
+    }
+}
+
+int main() {
+    srand(time(0)); // Seed for random
+    int n;
+
+    cout << "Enter number of elements: ";
+    cin >> n;
+
+    int arr[n], arrCopy[n];
+
+    cout << "Enter elements: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+        arrCopy[i] = arr[i]; // Copy for randomized version
+    }
+
+    // Deterministic Quick Sort
+    quickSortDeterministic(arr, 0, n - 1);
+    cout << "\nSorted Array (Deterministic Quick Sort): ";
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+
+    // Randomized Quick Sort
+    quickSortRandomized(arrCopy, 0, n - 1);
+    cout << "\nSorted Array (Randomized Quick Sort):   ";
+    for (int i = 0; i < n; i++) cout << arrCopy[i] << " ";
+
+    cout << endl;
+    return 0;
+}
